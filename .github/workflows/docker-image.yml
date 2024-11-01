@@ -1,0 +1,54 @@
+name: Vite-CI-CD
+
+on:
+  push:
+    branches: [ "main" ]
+
+permissions:
+  packages: write
+
+jobs:
+
+  build-vite-project:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    
+    - uses: actions/checkout@v4
+    
+    - name: Setup node.js env
+      uses: actions/setup-node@v4.1.0
+      with:
+        node-version: '22.11.0'
+        
+    - name: Install dependencies
+      run: npm install
+      
+    - name: Build vite project
+      run: npm run build
+
+
+      
+  build-and-push-image:
+  
+    runs-on: ubuntu-latest
+    
+    steps:
+    
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Login to Github Container registry
+        uses: docker/login-action@v3.3.0
+        with:
+          registry: https://ghcr.io
+          username:  ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Buld and push Docker images
+        uses: docker/build-push-action@v6.9.0
+        with:
+         context: .
+         push: true
+         tags: ghcr.io/dangdd2003/vite-test-cicd:v1.0

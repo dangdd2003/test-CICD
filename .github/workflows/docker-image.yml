@@ -27,7 +27,6 @@ jobs:
       - name: Build vite project
         run: npm run lint
 
-jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
     steps:
